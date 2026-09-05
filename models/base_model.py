@@ -2,6 +2,7 @@
 """Defines the BaseModel class, the parent of all other model classes."""
 import uuid
 from datetime import datetime
+
 import models
 
 

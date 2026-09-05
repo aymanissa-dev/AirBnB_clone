@@ -17,6 +17,11 @@ At this stage, the project provides:
 - `FileStorage`: an engine that serializes Python objects to a JSON file
   and deserializes them back into objects when the program restarts.
 
+> **Status:** the command interpreter (`console.py`) described below is
+> part of the next milestone and is not yet in this repository. The
+> sections below document its intended usage so the interface is
+> already specified before it's implemented.
+
 Later steps will add the interactive command interpreter itself and the
 remaining model classes.
 
