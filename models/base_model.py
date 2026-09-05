@@ -12,15 +12,32 @@ class BaseModel:
     helpers.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Initialize a new BaseModel instance.
 
-        Sets a unique id and the created_at/updated_at timestamps to
-        the current datetime.
+        Args:
+            *args: unused.
+            **kwargs: if not empty, each key/value pair is set as an
+                instance attribute. created_at and updated_at, given
+                as ISO format strings, are converted back into
+                datetime objects. __class__ is ignored since it is
+                not a real attribute. If kwargs is empty, a brand
+                new instance is created: a unique id is generated and
+                created_at/updated_at are set to the current
+                datetime.
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == "__class__":
+                    continue
+                if key in ("created_at", "updated_at"):
+                    value = datetime.strptime(
+                        value, "%Y-%m-%dT%H:%M:%S.%f")
+                setattr(self, key, value)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def __str__(self):
         """Return the string representation of the instance.

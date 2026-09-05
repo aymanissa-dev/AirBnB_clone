@@ -85,5 +85,51 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(obj_dict["my_number"], 89)
 
 
+class TestBaseModelFromDict(unittest.TestCase):
+    """Unit tests for recreating a BaseModel from a dictionary."""
+
+    def test_init_with_kwargs_sets_attributes(self):
+        """Attributes from kwargs should be set on the new instance."""
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_model.my_number = 89
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertEqual(my_new_model.id, my_model.id)
+        self.assertEqual(my_new_model.name, my_model.name)
+        self.assertEqual(my_new_model.my_number, my_model.my_number)
+
+    def test_init_with_kwargs_converts_datetimes(self):
+        """created_at/updated_at strings should become datetimes."""
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertIsInstance(my_new_model.created_at, datetime)
+        self.assertIsInstance(my_new_model.updated_at, datetime)
+        self.assertEqual(my_new_model.created_at, my_model.created_at)
+        self.assertEqual(my_new_model.updated_at, my_model.updated_at)
+
+    def test_init_with_kwargs_ignores_class_key(self):
+        """__class__ from kwargs should not become an attribute."""
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertNotIn("__class__", my_new_model.__dict__)
+
+    def test_new_instance_from_dict_is_not_same_object(self):
+        """The rebuilt instance should be a distinct object."""
+        my_model = BaseModel()
+        my_model_json = my_model.to_dict()
+        my_new_model = BaseModel(**my_model_json)
+        self.assertIsNot(my_model, my_new_model)
+
+    def test_to_dict_round_trip_matches(self):
+        """to_dict() of the rebuilt instance should equal the original."""
+        my_model = BaseModel()
+        my_model.name = "My_First_Model"
+        my_new_model = BaseModel(**my_model.to_dict())
+        self.assertEqual(my_new_model.to_dict(), my_model.to_dict())
+
+
 if __name__ == "__main__":
     unittest.main()
