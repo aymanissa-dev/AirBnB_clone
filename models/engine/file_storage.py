@@ -2,6 +2,7 @@
 """Defines the FileStorage class, a JSON-file storage engine."""
 import json
 from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -20,6 +21,7 @@ class FileStorage:
     # so reload() can reconstruct the right type of object.
     __classes = {
         "BaseModel": BaseModel,
+        "User": User,
     }
 
     def all(self):
