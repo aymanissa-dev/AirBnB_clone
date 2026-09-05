@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Defines the FileStorage class, a JSON-file storage engine."""
 import json
+from models.amenity import Amenity
 from models.base_model import BaseModel
 from models.city import City
 from models.state import State
@@ -22,6 +23,7 @@ class FileStorage:
     # Maps a class name (as stored in __class__) to the actual class,
     # so reload() can reconstruct the right type of object.
     __classes = {
+        "Amenity": Amenity,
         "BaseModel": BaseModel,
         "City": City,
         "State": State,
