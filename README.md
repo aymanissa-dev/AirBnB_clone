@@ -3,27 +3,25 @@
 ## Description
 
 This project is the first step towards building a full clone of the
-[AirBnB](https://www.airbnb.com/) web application. It lays the foundation
-for the entire stack: a command interpreter to manage the application's
-objects, a base class that all future models inherit from, and a storage
-engine that serializes objects to a JSON file so data survives between
-program runs.
+[AirBnB](https://www.airbnb.com/) web application. It implements the
+foundation for the entire stack: a command interpreter to manage the
+application's objects, a base class that all model classes inherit
+from, and a storage engine that serializes objects to a JSON file so
+data survives between program runs.
 
-At this stage, the project provides:
+The project currently provides:
 
 - `BaseModel`: a parent class defining common attributes (`id`,
   `created_at`, `updated_at`) and methods (`save`, `to_dict`) shared by
-  every future model (User, State, City, Place, etc.).
-- `FileStorage`: an engine that serializes Python objects to a JSON file
-  and deserializes them back into objects when the program restarts.
-
-> **Status:** the command interpreter (`console.py`) described below is
-> part of the next milestone and is not yet in this repository. The
-> sections below document its intended usage so the interface is
-> already specified before it's implemented.
-
-Later steps will add the interactive command interpreter itself and the
-remaining model classes.
+  every model.
+- Model classes `User`, `State`, `City`, `Amenity`, `Place`, and
+  `Review`, each inheriting from `BaseModel` and adding the attributes
+  relevant to that object.
+- `FileStorage`: an engine that serializes Python objects to a JSON
+  file and deserializes them back into objects when the program
+  restarts.
+- `console.py`: an interactive command interpreter for creating,
+  inspecting, updating, and deleting these objects.
 
 ## The Command Interpreter
 
@@ -55,7 +53,7 @@ Once started, you'll see a `(hbnb)` prompt waiting for a command:
 
 Documented commands (type help <topic>):
 ========================================
-help  quit
+EOF  all  count  create  destroy  emptyline  help  quit  show  update
 
 (hbnb) quit
 $
@@ -65,30 +63,51 @@ It also supports non-interactive mode, so commands can be piped in:
 
 ```bash
 $ echo "help" | ./console.py
-(hbnb)
-Documented commands (type help <topic>):
-========================================
-help  quit
-(hbnb)
-$
 ```
+
+### Supported commands
+
+| Command   | Usage                                              | Description                                    |
+|-----------|-----------------------------------------------------|-------------------------------------------------|
+| `create`  | `create <class name>`                                | Creates a new instance, saves it, prints its id  |
+| `show`    | `show <class name> <id>`                             | Prints the string representation of an instance  |
+| `destroy` | `destroy <class name> <id>`                          | Deletes an instance                              |
+| `all`     | `all [<class name>]`                                 | Prints all instances, optionally filtered        |
+| `count`   | `count <class name>`                                 | Prints the number of instances of a class        |
+| `update`  | `update <class name> <id> <attribute> "<value>"`     | Updates (or adds) an attribute on an instance     |
+| `quit` / `EOF` | `quit`                                          | Exits the console                                |
+
+Every command also supports the alternative `<class name>.<command>(<args>)`
+syntax, e.g. `User.all()`, `User.count()`, `User.show("<id>")`,
+`User.destroy("<id>")`, `User.update("<id>", "<attribute>", "<value>")`,
+or `User.update("<id>", {"<attribute>": "<value>", ...})` to update
+several attributes at once.
+
+Valid class names: `BaseModel`, `User`, `State`, `City`, `Amenity`,
+`Place`, `Review`.
 
 ### Examples
 
 ```bash
 $ ./console.py
+(hbnb) create User
+49faff9a-6318-451f-87b6-910505c55907
+(hbnb) show User 49faff9a-6318-451f-87b6-910505c55907
+[User] (49faff9a-6318-451f-87b6-910505c55907) {'id': '49faff9a-...', ...}
+(hbnb) User.update("49faff9a-6318-451f-87b6-910505c55907", "first_name", "Betty")
+(hbnb) User.count()
+1
+(hbnb) destroy User 49faff9a-6318-451f-87b6-910505c55907
 (hbnb) quit
 $
 ```
 
 ```bash
-$ echo "quit" | ./console.py
+$ echo "create BaseModel" | ./console.py
+(hbnb) 3aa5babc-9d1d-4b7e-b779-3b092b4657f9
 (hbnb)
 $
 ```
-
-(More commands — `create`, `show`, `destroy`, `all`, `update` — will be
-documented here as they are implemented.)
 
 ## Running the tests
 
